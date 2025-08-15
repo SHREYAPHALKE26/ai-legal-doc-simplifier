@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Legal Document Simplifier</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.5/babel.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .upload-area {
+            padding: 40px;
+            text-align: center;
+            border: 3px dashed #ddd;
+            margin: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #667eea;
+            background-color: #f0f4ff;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .upload-subtext {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .text-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .text-panel h3 {
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .text-content {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .insights-panel {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+        }
+
+        .insights-panel h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .insight-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .clauses-panel {
+            margin: 20px;
+            background: #e8f5e8;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .clause-category {
+            margin-bottom: 20px;
+        }
+
+        .clause-category h4 {
+            color: #155724;
+            margin-bottom: 10px;
+            text-transform: capitalize;
+        }
+
+        .clause-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            border-left: 4px solid #28a745;
+        }
+
+        .risk-level {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .risk-high { background: #f8d7da; color: #721c24; }
+        .risk-medium { background: #fff3cd; color: #856404; }
+        .risk-low { background: #d4edda; color: #155724; }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef } = React;
+
+        const LegalDocumentSimplifier = () => {
+            const [file, setFile] = useState(null);
+            const [results, setResults] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+            const [dragOver, setDragOver] = useState(false);
+            const fileInputRef = useRef(null);
+
+            const handleFileSelect = (selectedFile) => {
+                if (selectedFile) {
+                    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                    if (allowedTypes.includes(selectedFile.type)) {
+                        setFile(selectedFile);
+                        setError(null);
+                    } else {
+                        setError('Please upload a PDF or DOCX file.');
+                    }
+                }
+            };
+
+            const handleFileInputChange = (e) => {
+                handleFileSelect(e.target.files[0]);
+            };
+
+            const handleDragOver = (e) => {
+                e.preventDefault();
+                setDragOver(true);
+            };
+
+            const handleDragLeave = (e) => {
+                e.preventDefault();
+                setDragOver(false);
+            };
+
+            const handleDrop = (e) => {
+                e.preventDefault();
+                setDragOver(false);
+                handleFileSelect(e.dataTransfer.files[0]);
+            };
+
+            const uploadFile = async () => {
+                if (!file) {
+                    setError('Please select a file first.');
+                    return;
+                }
+
+                setLoading(true);
+                setError(null);
+                setResults(null);
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('http://localhost:5000/upload', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        setResults(data);
+                    } else {
+                        throw new Error(data.error || 'Processing failed');
+                    }
+                } catch (err) {
+                    setError(err.message || 'An error occurred while processing the document.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const renderClause = (clause, index) => {
+                const riskClass = `risk-${clause.risk_level?.toLowerCase() || 'low'}`;
+                return (
+                    <div key={index} className="clause-item">
+                        <div>{clause.text}</div>
+                        <span className={`risk-level ${riskClass}`}>
+                            {clause.risk_level || 'LOW'} RISK
+                        </span>
+                        {clause.keywords_found && clause.keywords_found.length > 0 && (
+                            <div style={{marginTop: '5px', fontSize: '0.8rem', color: '#666'}}>
+                                Keywords: {clause.keywords_found.join(', ')}
+                            </div>
+                        )}
+                    </div>
+                );
+            };
+
+            const renderClauses = (clauses) => {
+                if (!clauses || Object.keys(clauses).length === 0) {
+                    return <p>No important clauses detected.</p>;
+                }
+
+                return Object.entries(clauses).map(([category, items]) => {
+                    if (category === 'deadlines') {
+                        return (
+                            <div key={category} className="clause-category">
+                                <h4>📅 Deadlines & Important Dates</h4>
+                                {items.map((deadline, index) => (
+                                    <div key={index} className="clause-item">
+                                        <strong>{deadline.date_text}</strong>
+                                        <div style={{marginTop: '5px', fontSize: '0.9rem'}}>
+                                            {deadline.context}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        );
+                    }
+
+                    if (Array.isArray(items) && items.length > 0) {
+                        return (
+                            <div key={category} className="clause-category">
+                                <h4>{category.replace('_', ' ')}</h4>
+                                {items.map((clause, index) => renderClause(clause, index))}
+                            </div>
+                        );
+                    }
+                    return null;
+                });
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1><i className="fas fa-balance-scale"></i> AI Legal Document Simplifier</h1>
+                        <p>Transform complex legal documents into plain, understandable language</p>
+                    </div>
+
+                    <div className="main-card">
+                        {!loading && !results && (
+                            <div
+                                className={`upload-area ${dragOver ? 'dragover' : ''}`}
+                                onClick={() => fileInputRef.current?.click()}
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                            >
+                                <div className="upload-icon">
+                                    <i className="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <div className="upload-text">
+                                    {file ? file.name : 'Drop your legal document here or click to browse'}
+                                </div>
+                                <div className="upload-subtext">
+                                    Supports PDF and DOCX files (max 16MB)
+                                </div>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    className="file-input"
+                                    accept=".pdf,.docx"
+                                    onChange={handleFileInputChange}
+                                />
+                                <button 
+                                    className="upload-btn" 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        uploadFile();
+                                    }}
+                                    disabled={!file}
+                                >
+                                    <i className="fas fa-magic"></i> Simplify Document
+                                </button>
+                            </div>
+                        )}
+
+                        {loading && (
+                            <div className="loading">
+                                <div className="loading-spinner"></div>
+                                <p>Processing your document... This may take a few moments.</p>
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className="error-message">
+                                <i className="fas fa-exclamation-circle"></i> {error}
+                                <button 
+                                    onClick={() => {
+                                        setError(null);
+                                        setResults(null);
+                                        setFile(null);
+                                    }}
+                                    style={{
+                                        float: 'right',
+                                        background: 'none',
+                                        border: 'none',
+                                        color: '#721c24',
+                                        cursor: 'pointer',
+                                        fontSize: '1.1rem'
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        )}
+
+                        {results && (
+                            <>
+                                <div style={{padding: '20px', borderBottom: '1px solid #eee'}}>
+                                    <h2 style={{margin: '0 0 10px 0', color: '#333'}}>
+                                        <i className="fas fa-file-check"></i> Document: {results.filename}
+                                    </h2>
+                                    <button 
+                                        onClick={() => {
+                                            setResults(null);
+                                            setFile(null);
+                                            setError(null);
+                                        }}
+                                        style={{
+                                            background: '#6c757d',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '8px 16px',
+                                            borderRadius: '20px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <i className="fas fa-arrow-left"></i> Process Another Document
+                                    </button>
+                                </div>
+
+                                {results.important_clauses?.insights && results.important_clauses.insights.length > 0 && (
+                                    <div className="insights-panel">
+                                        <h3><i className="fas fa-lightbulb"></i> Key Insights</h3>
+                                        {results.important_clauses.insights.map((insight, index) => (
+                                            <div key={index} className="insight-item">
+                                                {insight}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <div className="results-container">
+                                    <div className="text-panel">
+                                        <h3><i className="fas fa-file-alt"></i> Original Document</h3>
+                                        <div className="text-content">
+                                            {results.original_text.length > 2000 
+                                                ? results.original_text.substring(0, 2000) + '...\n[Document truncated for display]'
+                                                : results.original_text
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div className="text-panel">
+                                        <h3><i className="fas fa-language"></i> Simplified Version</h3>
+                                        <div className="text-content">
+                                            {results.simplified_text}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {results.important_clauses?.clauses && Object.keys(results.important_clauses.clauses).length > 0 && (
+                                    <div className="clauses-panel">
+                                        <h3><i className="fas fa-exclamation-triangle"></i> Important Clauses to Review</h3>
+                                        {renderClauses(results.important_clauses.clauses)}
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+
+                    <div style={{textAlign: 'center', color: 'white', marginTop: '20px', opacity: '0.8'}}>
+                        <p>
+                            <i className="fas fa-info-circle"></i> 
+                            This tool provides general summaries only. Always consult a legal professional for important documents.
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<LegalDocumentSimplifier />, document.getElementById('root'));
+    </script>
+</body>
+</html>

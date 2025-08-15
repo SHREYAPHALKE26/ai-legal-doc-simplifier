@@ -1,0 +1,8 @@
+Flask>=2.2
+Flask-Cors
+gunicorn
+python-dotenv
+google-generativeai    # or google-genai if you migrated to the new SDK
+spacy
+PyMuPDF
+python-docx
