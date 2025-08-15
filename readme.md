@@ -57,12 +57,12 @@ git init
 git add .
 git commit -m "Initial commit — AI Legal Document Simplifier"
 
-
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6f34a366-c28a-42ac-a4ad-1ba43a63e6eb" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/10c4b7d3-0dca-418b-9db7-956a7f23bc00" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f224aa38-5028-4153-abec-463c92a22568" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d7fec2b1-4245-4300-8c75-6351d25db041" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c7ca492c-b0b0-49f3-aa8e-88db2eab4029" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/9e92c013-362e-41a9-b0e1-aee3a18b8bb1" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0d723e94-dd01-4a43-b214-d399d028045a" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a363e6be-c6ce-4007-ae9a-bccfe9e3a475" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/73b9845e-0a37-49da-8223-e83726a783e5" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/672aae9f-a77a-4080-bf9d-a87f54545bc5" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fdb6219d-bbf6-48ad-8ef1-8d2db19d8de0" />
 
 
 
