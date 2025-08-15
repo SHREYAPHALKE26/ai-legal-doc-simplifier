@@ -1,4 +1,3 @@
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/692541ef-eb83-4034-ad2e-3b6781f25046" /># AI Legal Document Simplifier
 
 **A web app that simplifies legal documents into plain English using Google Gemini.**
 
